@@ -1,8 +1,6 @@
 package com.transition.data;
 
 import javax.xml.bind.annotation.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,5 +91,16 @@ public class Joke {
 
     public void like() {
         this.likes +=1;
+    }
+
+    @Override
+    public String toString() {
+        return "Joke{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", comments=" + comments +
+                ", dateCreated=" + dateCreated +
+                ", likes=" + likes +
+                '}';
     }
 }

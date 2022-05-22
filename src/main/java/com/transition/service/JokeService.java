@@ -1,6 +1,5 @@
 package com.transition.service;
 
-import com.transition.data.Comment;
 import com.transition.data.Joke;
 import com.transition.data.Jokes;
 
@@ -26,23 +25,30 @@ public class JokeService {
         JAXBContext context = JAXBContext.newInstance(Jokes.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(joke, new File("vision.xml"));
+        marshaller.marshal(joke, new File("test.xml"));
+    }
+
+    public void addJokesToXmlFile(Joke joke) throws JAXBException {
+        Jokes allJoke = readJokeFromXml();
+        List<Joke> listOfJoke = allJoke.getJokes();
+        listOfJoke.add(joke);
+        Jokes newJokes = new Jokes();
+        newJokes.setJokes(listOfJoke);
+        writeJokeToXml(newJokes);
     }
 
     public Jokes readJokeFromXml() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Jokes.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         JAXBElement<Jokes> rootElement = unmarshaller.unmarshal(
-                new StreamSource(new File("vision.xml")),
-                Jokes.class);
-
+                new StreamSource(new File("test.xml")),Jokes.class);
         return rootElement.getValue();
     }
 
     public List<Joke> getAllSortedJokesByLikes(boolean fromLeast) throws JAXBException {
         Jokes allJoke = readJokeFromXml();
         List<Joke> listOfJoke = allJoke.getJokes();
-       if(fromLeast) {
+       if(!fromLeast) {
            listOfJoke .sort(Comparator.comparing(Joke::getLikes));
        }else {
            listOfJoke .sort(Comparator.comparing(Joke::getLikes).reversed());
@@ -53,8 +59,7 @@ public class JokeService {
 
     public void addCommentToJoke(int id,String comment) throws JAXBException {
         Jokes allJoke = readJokeFromXml();
-        List<Joke> listOfJoke = allJoke.getJokes();
-        listOfJoke.stream().peek(joke -> {
+        List<Joke> listOfJoke = allJoke.getJokes().stream().peek(joke -> {
             if(joke.getId() == id)joke.addComment(comment);
         }).toList();
 
@@ -65,11 +70,9 @@ public class JokeService {
 
     public void removeCommentsFromJoke(int id) throws IOException, JAXBException {
         Jokes allJoke = readJokeFromXml();
-        List<Joke> listOfJoke = allJoke.getJokes();
-        listOfJoke.stream().peek(joke -> {
+        List<Joke> listOfJoke = allJoke.getJokes().stream().peek(joke -> {
             if (joke.getId() == id) joke.setComments(new ArrayList<String>());
         }).toList();
-
         Jokes newJokes = new Jokes();
         newJokes.setJokes(listOfJoke);
         writeJokeToXml(newJokes);
@@ -77,8 +80,7 @@ public class JokeService {
 
     public void likeJoke(int id) throws IOException, JAXBException {
         Jokes allJoke = readJokeFromXml();
-        List<Joke> listOfJoke = allJoke.getJokes();
-        listOfJoke.stream().peek(joke -> {
+        List<Joke> listOfJoke = allJoke.getJokes().stream().peek(joke -> {
             if (joke.getId() == id) joke.like();
         }).toList();
         Jokes newJokes = new Jokes();
@@ -88,17 +90,8 @@ public class JokeService {
 
     public void removeJoke(int id) throws IOException, JAXBException {
         Jokes allJoke = readJokeFromXml();
-        List<Joke> listOfJoke = allJoke.getJokes();
-        listOfJoke.stream().filter(joke -> joke.getId() != id).toList();
-        Jokes newJokes = new Jokes();
-        newJokes.setJokes(listOfJoke);
-        writeJokeToXml(newJokes);
-    }
-
-    public void addJokesToXmlFile(Joke joke) throws JAXBException {
-        Jokes allJoke = readJokeFromXml();
-        List<Joke> listOfJoke = allJoke.getJokes();
-        listOfJoke.add(joke);
+        List<Joke> listOfJoke = allJoke.getJokes()
+                .stream().filter(joke -> joke.getId() != id).toList();
         Jokes newJokes = new Jokes();
         newJokes.setJokes(listOfJoke);
         writeJokeToXml(newJokes);
