@@ -2,12 +2,13 @@ package com.transition.data;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement
 public class Jokes {
     @XmlElement(name = "joke")
-    private List<Joke> jokes = null;
+    private List<Joke> jokes = new ArrayList<>();
 
     public List<Joke> getJokes() {
         return jokes;

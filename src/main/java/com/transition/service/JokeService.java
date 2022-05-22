@@ -14,6 +14,7 @@ import java.util.List;
 
 public class JokeService {
 
+
     public void createNewJoke(Joke joke) throws JAXBException {
         Jokes newJoke = new Jokes();
         newJoke.setJokes(List.of(joke));
